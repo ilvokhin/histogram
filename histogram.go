@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"cmp"
 	"fmt"
 	"io"
@@ -145,9 +146,10 @@ func (h *Histogram) intervalEnd(pos int) (float64, string) {
 
 func main() {
 	h := Histogram{}
+	stdin := bufio.NewReader(os.Stdin)
 	for {
 		var val float64
-		_, err := fmt.Scan(&val)
+		_, err := fmt.Fscan(stdin, &val)
 		if err == io.EOF {
 			break
 		}
@@ -156,7 +158,9 @@ func main() {
 		}
 		h.Update(val)
 	}
-	err := h.Visualize(os.Stdout)
+	stdout := bufio.NewWriter(os.Stdout)
+	defer stdout.Flush()
+	err := h.Visualize(stdout)
 	if err != nil {
 		log.Fatal(err)
 	}
